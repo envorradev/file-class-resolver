@@ -31,5 +31,8 @@
         "allow-plugins": {
             "ramsey/composer-repl": true
         }
+    },
+    "scripts": {
+        "test": "phpunit tests/"
     }
 }
