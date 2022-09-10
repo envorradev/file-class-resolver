@@ -1,0 +1,35 @@
+{
+    "name": "envorradev/file-class-resolver",
+    "require": {
+        "php": "^8.1",
+        "nikic/php-parser": "^4.15"
+    },
+    "require-dev": {
+        "phpstan/phpstan": "^1.8",
+        "phpunit/phpunit": "^9.5",
+        "ramsey/composer-repl": "^1.4"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Envorra\\FileClassResolver\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Envorra\\FileClassResolver\\Tests\\": "tests/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Sam Taylor",
+            "email": "15961687+samueljtaylor@users.noreply.github.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "config": {
+        "allow-plugins": {
+            "ramsey/composer-repl": true
+        }
+    }
+}
