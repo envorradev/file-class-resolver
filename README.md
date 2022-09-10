@@ -145,7 +145,7 @@ Gets the `\PhpParser\Node\Stmt\Class_` node.
 See: [nikic/php-parser](https://github.com/nikic/PHP-Parser) and [Class_](https://github.com/nikic/PHP-Parser/blob/master/lib/PhpParser/Node/Stmt/Class_.php)
 
 ```php
-$resolver->getNamespaceNode();
+$resolver->getClassNode();
 ```
 
 Returns something like:
