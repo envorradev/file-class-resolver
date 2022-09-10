@@ -32,7 +32,7 @@ class Instance
         $this->reflection = new ReflectionClass($this->class);
         $this->constructor = $this->reflection->getConstructor();
 
-        if($this->constructor) {
+        if ($this->constructor) {
             $this->expectedParameters = $this->constructor->getParameters();
             $this->totalParameters = $this->constructor->getNumberOfParameters();
             $this->requiredParameters = $this->constructor->getNumberOfRequiredParameters();
@@ -101,9 +101,9 @@ class Instance
 
             // If the array doesn't have a key with the named parameter, cycle through the parameters
             // given in the array until one with the correct type has been found.
-            for($counter = $position; $counter < count($this->parameters); $counter++) {
+            for ($counter = $position; $counter < count($this->parameters); $counter++) {
                 $actual = $this->getParameter($counter);
-                if($actual && $this->validParameterType($parameter, $actual)) {
+                if ($actual && $this->validParameterType($parameter, $actual)) {
                     $parameters[] = $actual;
                     $position++;
                     continue 2;
@@ -166,10 +166,10 @@ class Instance
             return false;
         }
 
-        /** @phpstan-ignore-next-line  */
+        /** @phpstan-ignore-next-line */
         $expectedType = $reflectionParameter->getType()?->getName();
 
-        /** @phpstan-ignore-next-line  */
+        /** @phpstan-ignore-next-line */
         if ($reflectionParameter->getType()?->isBuiltin()) {
             return match ($expectedType) {
                 'int', 'integer' => is_integer($parameter),

@@ -14,9 +14,10 @@ interface Resolver
 {
     /**
      * @param  SplFileObject|SplFileInfo|string  $file
-     * @return Resolver
+     * @param  array                             $parameters
+     * @return object|null
      */
-    public static function resolver(SplFileObject|SplFileInfo|string $file): Resolver;
+    public static function make(SplFileObject|SplFileInfo|string $file, array $parameters = []): ?object;
 
     /**
      * @param  SplFileObject|SplFileInfo|string  $file
@@ -26,10 +27,14 @@ interface Resolver
 
     /**
      * @param  SplFileObject|SplFileInfo|string  $file
-     * @param  array                             $parameters
-     * @return object|null
+     * @return Resolver
      */
-    public static function make(SplFileObject|SplFileInfo|string $file, array $parameters = []): ?object;
+    public static function resolver(SplFileObject|SplFileInfo|string $file): Resolver;
+
+    /**
+     * @return string|null
+     */
+    public function getClass(): ?string;
 
     /**
      * @param  array  $parameters
@@ -40,20 +45,15 @@ interface Resolver
     /**
      * @return string|null
      */
-    public function getClass(): ?string;
-
-    /**
-     * @return string|null
-     */
     public function getClassName(): ?string;
 
     /**
      * @return string|null
      */
-    public function getNamespace(): ?string;
+    public function getFullyQualifiedClassName(): ?string;
 
     /**
      * @return string|null
      */
-    public function getFullyQualifiedClassName(): ?string;
+    public function getNamespace(): ?string;
 }

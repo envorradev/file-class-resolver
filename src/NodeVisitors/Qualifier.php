@@ -13,9 +13,24 @@ use PhpParser\Node\Stmt\Namespace_;
  */
 class Qualifier extends AbstractVisitor
 {
+    protected Class_ $class;
     protected Namespace_ $namespace;
 
-    protected Class_ $class;
+    /**
+     * @inheritDoc
+     */
+    public function enterNode(Node $node): int|Node|null
+    {
+        if ($node instanceof Namespace_) {
+            $this->namespace = $node;
+        }
+
+        if ($node instanceof Class_) {
+            $this->class = $node;
+        }
+
+        return null;
+    }
 
     /**
      * @return Class_
@@ -31,22 +46,6 @@ class Qualifier extends AbstractVisitor
     public function getNamespace(): Namespace_
     {
         return $this->namespace;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function enterNode(Node $node): int|Node|null
-    {
-        if($node instanceof Namespace_) {
-            $this->namespace = $node;
-        }
-
-        if($node instanceof Class_) {
-            $this->class = $node;
-        }
-
-        return null;
     }
 
 

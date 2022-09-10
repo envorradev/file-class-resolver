@@ -2,11 +2,9 @@
 
 namespace Envorra\FileClassResolver;
 
-use Exception;
 use SplFileInfo;
 use SplFileObject;
 use PhpParser\Node;
-use ReflectionClass;
 use PhpParser\Parser;
 use PhpParser\NodeTraverser;
 use PhpParser\ParserFactory;

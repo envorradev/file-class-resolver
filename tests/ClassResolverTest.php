@@ -5,9 +5,9 @@ namespace Envorra\FileClassResolver\Tests;
 use SplFileInfo;
 use SplFileObject;
 use PhpParser\Node\Stmt\Class_;
+use PHPUnit\Framework\TestCase;
 use PhpParser\Node\Stmt\Namespace_;
 use Envorra\FileClassResolver\ClassResolver;
-use PHPUnit\Framework\TestCase;
 use Envorra\FileClassResolver\Contracts\Resolver;
 use Envorra\FileClassResolver\Tests\Environment\FolderOne\SimpleClassOne;
 use Envorra\FileClassResolver\Tests\Environment\FolderTwo\SimpleClassTwo;
@@ -21,53 +21,6 @@ class ClassResolverTest extends TestCase
 {
     /**
      * @test
-     * @covers ::resolve
-     */
-    public function it_can_resolve_class_from_string(): void
-    {
-        $this->assertEquals(SimpleClassOne::class, ClassResolver::resolve($this->simpleClassOne()));
-    }
-
-    /**
-     * @test
-     * @covers ::resolve
-     */
-    public function it_can_resolve_class_from_SplFileInfo(): void
-    {
-        $info = new SplFileInfo($this->simpleClassOne());
-        $this->assertEquals(SimpleClassOne::class, ClassResolver::resolve($info));
-    }
-
-    /**
-     * @test
-     * @covers ::resolve
-     */
-    public function it_can_resolve_class_from_SplFileObject(): void
-    {
-        $object = new SplFileObject($this->simpleClassOne());
-        $this->assertEquals(SimpleClassOne::class, ClassResolver::resolve($object));
-    }
-
-    /**
-     * @test
-     * @covers ::make
-     */
-    public function it_can_make_instance_of_class(): void
-    {
-        $this->assertInstanceOf(SimpleClassOne::class, ClassResolver::make($this->simpleClassOne()));
-    }
-
-    /**
-     * @test
-     * @covers ::resolver
-     */
-    public function it_can_get_resolver(): void
-    {
-        $this->assertInstanceOf(Resolver::class, ClassResolver::resolver($this->simpleClassOne()));
-    }
-
-    /**
-     * @test
      * @covers ::getClass
      */
     public function it_can_get_class(): void
@@ -78,44 +31,12 @@ class ClassResolverTest extends TestCase
 
     /**
      * @test
-     * @covers ::getFullyQualifiedClassName
+     * @covers ::getClassInstance
      */
-    public function it_can_get_fully_qualified_class(): void
+    public function it_can_get_class_instance_with_multiple_params(): void
     {
-        $resolver = ClassResolver::resolver($this->simpleClassTwo());
-        $this->assertEquals(SimpleClassTwo::class, $resolver->getFullyQualifiedClassName());
-    }
-
-    /**
-     * @test
-     * @covers ::getClassName
-     */
-    public function it_can_get_class_name(): void
-    {
-        $resolver = ClassResolver::resolver($this->simpleClassTwo());
-        $this->assertEquals('SimpleClassTwo', $resolver->getClassName());
-    }
-
-    /**
-     * @test
-     * @covers ::getNamespace
-     */
-    public function it_can_get_namespace(): void
-    {
-        $resolver = ClassResolver::resolver($this->simpleClassTwo());
-        $this->assertEquals('Envorra\\FileClassResolver\\Tests\\Environment\\FolderTwo', $resolver->getNamespace());
-    }
-
-    /**
-     * @test
-     * @covers ::getClassNode
-     */
-    public function it_can_get_class_node(): void
-    {
-        $resolver = ClassResolver::resolver($this->simpleClassTwo());
-        $node = $resolver->getClassNode();
-        $this->assertInstanceOf(Class_::class, $node);
-        $this->assertEquals('SimpleClassTwo', $node->name->name);
+        $resolver = ClassResolver::resolver(__DIR__.'/Environment/FolderOne/ClassNeedsParams.php');
+        $this->assertInstanceOf(ClassNeedsParams::class, $resolver->getClassInstance(['string', 6]));
     }
 
     /**
@@ -142,16 +63,6 @@ class ClassResolverTest extends TestCase
      * @test
      * @covers ::getClassInstance
      */
-    public function it_can_get_class_instance_with_multiple_params(): void
-    {
-        $resolver = ClassResolver::resolver(__DIR__.'/Environment/FolderOne/ClassNeedsParams.php');
-        $this->assertInstanceOf(ClassNeedsParams::class, $resolver->getClassInstance(['string', 6]));
-    }
-
-    /**
-     * @test
-     * @covers ::getClassInstance
-     */
     public function it_can_get_class_instance_with_unordered_named_params(): void
     {
         $resolver = ClassResolver::resolver(__DIR__.'/Environment/FolderOne/ClassNeedsParams.php');
@@ -164,12 +75,44 @@ class ClassResolverTest extends TestCase
 
     /**
      * @test
-     * @covers ::getClassInstance
+     * @covers ::getClassName
      */
-    public function it_returns_null_on_failure_to_get_class_instance(): void
+    public function it_can_get_class_name(): void
     {
-        $resolver = ClassResolver::resolver(__DIR__.'/Environment/FolderOne/ClassNeedsParams.php');
-        $this->assertNull($resolver->getClassInstance());
+        $resolver = ClassResolver::resolver($this->simpleClassTwo());
+        $this->assertEquals('SimpleClassTwo', $resolver->getClassName());
+    }
+
+    /**
+     * @test
+     * @covers ::getClassNode
+     */
+    public function it_can_get_class_node(): void
+    {
+        $resolver = ClassResolver::resolver($this->simpleClassTwo());
+        $node = $resolver->getClassNode();
+        $this->assertInstanceOf(Class_::class, $node);
+        $this->assertEquals('SimpleClassTwo', $node->name->name);
+    }
+
+    /**
+     * @test
+     * @covers ::getFullyQualifiedClassName
+     */
+    public function it_can_get_fully_qualified_class(): void
+    {
+        $resolver = ClassResolver::resolver($this->simpleClassTwo());
+        $this->assertEquals(SimpleClassTwo::class, $resolver->getFullyQualifiedClassName());
+    }
+
+    /**
+     * @test
+     * @covers ::getNamespace
+     */
+    public function it_can_get_namespace(): void
+    {
+        $resolver = ClassResolver::resolver($this->simpleClassTwo());
+        $this->assertEquals('Envorra\\FileClassResolver\\Tests\\Environment\\FolderTwo', $resolver->getNamespace());
     }
 
     /**
@@ -186,8 +129,65 @@ class ClassResolverTest extends TestCase
             'FileClassResolver',
             'Tests',
             'Environment',
-            'FolderTwo'
+            'FolderTwo',
         ], $node->name->parts);
+    }
+
+    /**
+     * @test
+     * @covers ::resolver
+     */
+    public function it_can_get_resolver(): void
+    {
+        $this->assertInstanceOf(Resolver::class, ClassResolver::resolver($this->simpleClassOne()));
+    }
+
+    /**
+     * @test
+     * @covers ::make
+     */
+    public function it_can_make_instance_of_class(): void
+    {
+        $this->assertInstanceOf(SimpleClassOne::class, ClassResolver::make($this->simpleClassOne()));
+    }
+
+    /**
+     * @test
+     * @covers ::resolve
+     */
+    public function it_can_resolve_class_from_SplFileInfo(): void
+    {
+        $info = new SplFileInfo($this->simpleClassOne());
+        $this->assertEquals(SimpleClassOne::class, ClassResolver::resolve($info));
+    }
+
+    /**
+     * @test
+     * @covers ::resolve
+     */
+    public function it_can_resolve_class_from_SplFileObject(): void
+    {
+        $object = new SplFileObject($this->simpleClassOne());
+        $this->assertEquals(SimpleClassOne::class, ClassResolver::resolve($object));
+    }
+
+    /**
+     * @test
+     * @covers ::resolve
+     */
+    public function it_can_resolve_class_from_string(): void
+    {
+        $this->assertEquals(SimpleClassOne::class, ClassResolver::resolve($this->simpleClassOne()));
+    }
+
+    /**
+     * @test
+     * @covers ::getClassInstance
+     */
+    public function it_returns_null_on_failure_to_get_class_instance(): void
+    {
+        $resolver = ClassResolver::resolver(__DIR__.'/Environment/FolderOne/ClassNeedsParams.php');
+        $this->assertNull($resolver->getClassInstance());
     }
 
     protected function simpleClassOne(): string
