@@ -78,7 +78,7 @@ class ClassResolver implements Resolver
      */
     protected function addNodeVisitors(): void
     {
-        foreach($this->nodeVisitors() as $visitor) {
+        foreach(array_merge([$this->qualifier], $this->nodeVisitors()) as $visitor) {
             $this->nodeTraverser->addVisitor($visitor);
         }
     }
@@ -96,7 +96,7 @@ class ClassResolver implements Resolver
      */
     protected function nodeVisitors(): array
     {
-        return [$this->qualifier];
+        return [];
     }
 
     /**
