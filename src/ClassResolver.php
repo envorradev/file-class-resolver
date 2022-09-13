@@ -6,6 +6,7 @@ use SplFileInfo;
 use SplFileObject;
 use PhpParser\Node;
 use PhpParser\Parser;
+use PhpParser\NodeVisitor;
 use PhpParser\NodeTraverser;
 use PhpParser\ParserFactory;
 use PhpParser\Node\Stmt\Class_;
@@ -33,11 +34,69 @@ class ClassResolver implements Resolver
      */
     protected function __construct(protected SplFileObject $file)
     {
-        $this->parser = (new ParserFactory)->create(ParserFactory::PREFER_PHP7);
-        $this->qualifier = new Qualifier();
-        $this->nodeTraverser = new NodeTraverser();
-        $this->nodeTraverser->addVisitor($this->qualifier);
-        $this->nodes = $this->nodeTraverser->traverse($this->getAbstractSyntaxTree());
+        $this->initialize();
+        $this->addNodeVisitors();
+        $this->nodes = $this->traverse();
+    }
+
+    /**
+     * @return void
+     */
+    protected function initialize(): void
+    {
+        $this->parser = $this->initParser();
+        $this->qualifier = $this->initQualifier();
+        $this->nodeTraverser = $this->initNodeTraverser();
+    }
+
+    /**
+     * @return Parser
+     */
+    protected function initParser(): Parser
+    {
+        return (new ParserFactory)->create(ParserFactory::PREFER_PHP7);
+    }
+
+    /**
+     * @return Qualifier
+     */
+    protected function initQualifier(): Qualifier
+    {
+        return new Qualifier();
+    }
+
+    /**
+     * @return NodeTraverser
+     */
+    protected function initNodeTraverser(): NodeTraverser
+    {
+        return new NodeTraverser();
+    }
+
+    /**
+     * @return void
+     */
+    protected function addNodeVisitors(): void
+    {
+        foreach($this->nodeVisitors() as $visitor) {
+            $this->nodeTraverser->addVisitor($visitor);
+        }
+    }
+
+    /**
+     * @return Node[]
+     */
+    protected function traverse(): array
+    {
+        return $this->nodeTraverser->traverse($this->getAbstractSyntaxTree());
+    }
+
+    /**
+     * @return NodeVisitor[]
+     */
+    protected function nodeVisitors(): array
+    {
+        return [$this->qualifier];
     }
 
     /**
